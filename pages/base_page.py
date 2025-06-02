@@ -10,7 +10,7 @@ class BasePage:
     def __init__(self, driver: WebDriver, base_url: str):
         self.driver = driver
         self.base_url = base_url
-        self.wait = WebDriverWait(driver, 10)
+        self.wait = WebDriverWait(driver, 20)
 
     def open(self, path=""):
         """Abre uma URL específica."""

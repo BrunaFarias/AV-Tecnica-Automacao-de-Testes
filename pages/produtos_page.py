@@ -1,5 +1,8 @@
+import time
 from selenium.webdriver.common.by import By
 from pages.base_page import BasePage
+from selenium.webdriver.support import expected_conditions as EC
+
 
 class ProdutosPage(BasePage):
     """
@@ -7,8 +10,10 @@ class ProdutosPage(BasePage):
     Contém métodos para interações específicas com a página de produtos.
     """
     PRODUCT_CARDS = (By.CSS_SELECTOR, ".card-body") # Cartões de produtos
-    ADD_TO_CART_BUTTON = (By.CSS_SELECTOR, "button[data-test^='adicionar-produto']") # Botão "Adicionar ao carrinho"
-    CART_ICON = (By.CSS_SELECTOR, "a[data-test='carrinho']") # Ícone do carrinho
+    PRODUCT_TITLE = (By.CSS_SELECTOR, ".card-title.negrito") 
+    PRODUCT_DETAIL_LINK = (By.CSS_SELECTOR, "a[data-testid='product-detail-link']")
+    CART_ICON = (By.CSS_SELECTOR, "a[data-testid='carrinho']")
+    ADD_TO_LIST_BUTTON = (By.CSS_SELECTOR, "button[data-testid='adicionarNaLista']")
 
     def __init__(self, driver, base_url):
         super().__init__(driver, base_url)
@@ -18,15 +23,46 @@ class ProdutosPage(BasePage):
         """Navega para a página de produtos."""
         self.open(self.path)
 
-    def adicionar_produto_ao_carrinho(self, produto):
-        """Adiciona um produto ao carrinho."""
-        product_card_locator = (By.XPATH, f"//h5[text()='{produto}']/ancestor::div[@class='card-body']//button[contains(@data-test, 'adicionar-produto')]")
-        self.click(product_card_locator)
+    def adicionar_produto_a_lista_de_compras(self, produto):
+        """Adiciona um produto a lista."""
+        detalhes_link_locator = (By.XPATH,
+                                 f"//h5[text()='{produto}']/ancestor::div[@class='card-body']"
+                                 f"//button[contains(@data-testid, 'adicionarNaLista')]")
+        
+        self.click(detalhes_link_locator)
+        time.sleep(1) 
+        print(f"DEBUG: Clique em 'Adicionar a lista' para '{produto}' realizado e 1s de pausa. Indo para a lista de compras.")
+
+        try:
+            # Espera explícita para o elemento estar visível e clicável
+            self.wait.until(EC.visibility_of_element_located(detalhes_link_locator))
+            print(f"DEBUG (ProdutosPage): Botão 'Adicionar a lista' para '{produto}' está VISÍVEL.")
+            
+            self.wait.until(EC.element_to_be_clickable(detalhes_link_locator))
+            print(f"DEBUG (ProdutosPage): Botão 'Adicionar a lista' para '{produto}' está CLICÁVEL.")
+            
+            self.click(detalhes_link_locator) # Executa o clique
+            print(f"DEBUG (ProdutosPage): Clique em 'Adicionar a lista' para '{produto}' realizado.")
+            time.sleep(1) 
+
+        except Exception as e:
+            print(f"DEBUG (ProdutosPage): ERRO ao tentar clicar no botão 'Adicionar a lista' para '{produto}': {e}")
+            raise       
 
     def nomes_dos_produtos(self):
         """Obtém os nomes de todos os produtos exibidos na página."""
-        product_elements = self.find_elements((By.CSS_SELECTOR, ".card-title"))
+        product_elements = self.find_elements(self.PRODUCT_TITLE)
         return [elem.text for elem in product_elements]
+    
+    def obter_primeiro_nome_produto(self):
+        """
+        Obtém o nome do primeiro produto exibido na página.
+        Retorna None se nenhum produto for encontrado.
+        """
+        product_titles = self.nomes_dos_produtos()
+        if product_titles:
+            return product_titles[0]
+        return None   
     
     def ir_carrinho(self):
         """Navega para a página do carrinho."""

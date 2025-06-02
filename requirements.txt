@@ -2,4 +2,4 @@
 selenium
 pytest
 requests
-webdriver_manager
+webdriver-manager

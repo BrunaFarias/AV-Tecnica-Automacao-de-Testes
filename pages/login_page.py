@@ -6,8 +6,8 @@ class LoginPage(BasePage):
     Página de login da aplicação.
     """
     EMAIL_INPUT = (By.ID, "email")
-    PASSWORD_INPUT = (By.ID, "senha")
-    LOGIN_BUTTON = (By.CSS_SELECTOR, "button[data-test='entrar']")
+    PASSWORD_INPUT = (By.ID, "password")
+    LOGIN_BUTTON = (By.CSS_SELECTOR, "button[data-testid='entrar']")
     ERROR_MESSAGE = (By.CSS_SELECTOR, ".alert-danger")
 
     def __init__(self, driver, base_url):
