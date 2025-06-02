@@ -41,7 +41,6 @@ Os testes de frontend simulam fluxos reais de usuário, como:
 1.  **Clone o Repositório:**
     ```bash
     git clone https://github.com/BrunaFarias/AV-Tecnica-Automacao-de-Testes
-    cd serverest_automation
     ```
 2.  **Instale as Dependências:**
     ```bash
